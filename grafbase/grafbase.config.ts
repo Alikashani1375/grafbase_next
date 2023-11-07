@@ -1,4 +1,4 @@
-import { g, config, auth } from '@grafbase/sdk';
+import { g, config, connector,auth } from '@grafbase/sdk';
 
 // @ts-ignore
 const User = g.model('User', {
@@ -31,6 +31,15 @@ const jwt = auth.JWT({
   issuer: 'grafbase',
   secret:  g.env('NEXTAUTH_SECRET')
 })
+
+const stripe = connector.OpenAPI('Stripe', {
+  schema:
+    'https://raw.githubusercontent.com/stripe/openapi/master/openapi/spec3.json',
+  headers: headers => {
+    headers.set('Authorization', `Bearer ${g.env('KEY')}`)
+  }
+})
+g.datasource(stripe)
 
 export default config({
   schema: g,
